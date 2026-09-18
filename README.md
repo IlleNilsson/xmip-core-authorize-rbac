@@ -1,12 +1,6 @@
 # xmip-core-authorize-rbac
 
-Authorize by rbac: decides by roles granted permissions on artifacts; a transport-layer policy. A technology of
-[xmip-core-authorize](https://github.com/IlleNilsson/xmip-core-authorize).
-
-Declared and not yet written; `architecture.toml` carries the maturity. When
-it is written it implements `Authorizer`, one mechanism at one gate (ADR-0050).
-What it may depend on is `repository-model.md` section 4 and ADR-0044: its
-capability, and no sibling.
+Role-based authorization: roles granted or refused an action on artifacts by pattern, judged against the roles the identity carries. A technology of [xmip-core-authorize](https://github.com/IlleNilsson/xmip-core-authorize).
 
 ## Toolchain
 
