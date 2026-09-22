@@ -19,6 +19,7 @@
 //! the facts through `decide(&IdentityFacts, ..)`; until the capability
 //! carries them, what this policy reads is what the gate recorded.
 
+pub use authorize::pattern::matches;
 use authorize::{Action, Attempt, Authorizer, Decision};
 use context::IdentityFacts;
 use xcore::Layer;
@@ -163,33 +164,6 @@ impl Authorizer for Rbac {
     }
 }
 
-/// Whether a name matches a pattern, where `*` stands for any run of
-/// characters and everything else stands for itself.
-#[must_use]
-pub fn matches(pattern: &str, name: &str) -> bool {
-    let mut pieces = pattern.split('*');
-    let Some(head) = pieces.next() else {
-        return name.is_empty();
-    };
-    let Some(mut rest) = name.strip_prefix(head) else {
-        return false;
-    };
-    let mut pieces = pieces.peekable();
-
-    while let Some(piece) = pieces.next() {
-        let last = pieces.peek().is_none();
-        if last {
-            return rest.ends_with(piece);
-        }
-        match rest.find(piece) {
-            Some(at) => rest = &rest[at + piece.len()..],
-            None => return false,
-        }
-    }
-
-    rest.is_empty()
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -295,12 +269,5 @@ mod tests {
             rbac().decide(&facts, &Attempt::new(Action::Process, "Approval")),
             Some(Decision::Allowed)
         );
-
-        assert!(matches("partner-*", "partner-x"));
-        assert!(matches("*", ""));
-        assert!(matches("a*b*c", "axxbyyc"));
-        assert!(!matches("a*b*c", "axxbyy"));
-        assert!(!matches("Billing", "Billing2"));
-        assert!(matches("*.xml", "orders.xml"));
     }
 }
