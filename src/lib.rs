@@ -19,7 +19,7 @@
 //! the facts through `decide(&IdentityFacts, ..)`; until the capability
 //! carries them, what this policy reads is what the gate recorded.
 
-pub use authorize::pattern::matches;
+use authorize::pattern::matches;
 use authorize::{Action, Attempt, Authorizer, Decision};
 use context::IdentityFacts;
 use xcore::Layer;
