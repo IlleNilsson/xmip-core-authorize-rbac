@@ -6,7 +6,7 @@
 //! (ADR-0050 section 5). A [`Role`] permits and forbids actions on artifacts
 //! named by pattern — `Billing*`, `partner-x`, `*` — and the identity's roles
 //! come from the facts: every evidence entry the gate recorded under [`ROLE`]
-//! on either layer of the record, one role each or a comma-separated list.
+//! on either layer of the record, one role each.
 //! A role the identity carries and this policy does not define grants
 //! nothing.
 //!
@@ -113,15 +113,12 @@ impl Rbac {
     }
 
     /// The roles the record says this identity holds: every [`ROLE`]
-    /// evidence entry on either layer, split on commas, sorted, each once.
+    /// evidence entry on either layer, one role each, sorted, each once.
     #[must_use]
     pub fn held_by(identity: &IdentityFacts) -> Vec<String> {
-        let mut roles: Vec<String> = std::iter::once(&identity.transport)
-            .chain(identity.message.as_ref())
-            .flat_map(|held| held.evidence.iter())
-            .filter(|(name, _)| name == ROLE)
-            .flat_map(|(_, value)| value.split(','))
-            .map(str::trim)
+        let mut roles: Vec<String> = identity
+            .held()
+            .flat_map(|held| held.evidence_values(ROLE))
             .filter(|role| !role.is_empty())
             .map(ToString::to_string)
             .collect();
@@ -214,7 +211,7 @@ mod tests {
         // was written to say no.
         let decision = rbac()
             .decide(
-                &holding(&["operator, auditor"]),
+                &holding(&["operator", "auditor"]),
                 &Attempt::new(Action::Send, "Billing"),
             )
             .expect("an opinion");

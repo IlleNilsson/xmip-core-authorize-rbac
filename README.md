@@ -1,6 +1,6 @@
 # xmip-core-authorize-rbac
 
-Role-based authorization: roles granted or refused an action on artifacts by pattern, judged against the roles the identity carries. A technology of [xmip-core-authorize](https://github.com/IlleNilsson/xmip-core-authorize).
+Role-based authorization: roles granted or refused an action on artifacts by pattern, judged against the roles the identity carries — every `role` evidence entry on either layer, one role each. A technology of [xmip-core-authorize](https://github.com/IlleNilsson/xmip-core-authorize).
 
 ## Toolchain
 
