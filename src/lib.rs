@@ -4,7 +4,7 @@
 //!
 //! One policy at the transport layer: roles granted permissions on artifacts
 //! (ADR-0050 section 5). A [`Role`] permits and forbids actions on artifacts
-//! named by pattern — `Billing*`, `partner-x`, `*` — and the identity's roles
+//! named by pattern — `Billing*`, `party-x`, `*` — and the identity's roles
 //! come from the facts: every evidence entry the gate recorded under [`ROLE`]
 //! on either layer of the record, one role each.
 //! A role the identity carries and this policy does not define grants
@@ -185,7 +185,7 @@ mod tests {
         Rbac::new()
             .role(
                 Role::named("shipper")
-                    .permits(Permission::to(Action::Receive, "partner-*"))
+                    .permits(Permission::to(Action::Receive, "party-*"))
                     .permits(Permission::to(Action::Send, "Shipping")),
             )
             .role(Role::named("auditor").forbids(Permission::any("Billing*")))
@@ -196,7 +196,7 @@ mod tests {
     fn what_a_held_role_permits_is_allowed() {
         let decision = rbac().decide(
             &holding(&["shipper"]),
-            &Attempt::new(Action::Receive, "partner-x"),
+            &Attempt::new(Action::Receive, "party-x"),
         );
 
         assert_eq!(decision, Some(Decision::Allowed));
@@ -253,7 +253,7 @@ mod tests {
             Some(
                 AuthenticatedIdentity::new(
                     mechanism::edi_x12_interchange(),
-                    "ISA06=PARTNERX",
+                    "ISA06=PARTYX",
                     Established::Detected,
                     Verified::Claimed,
                 )
