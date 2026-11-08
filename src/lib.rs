@@ -196,7 +196,7 @@ mod tests {
     fn what_a_held_role_permits_is_allowed() {
         let decision = rbac().decide(
             &holding(&["shipper"]),
-            &Attempt::new(Action::Receive, "party-x"),
+            &Attempt::now(Action::Receive, "party-x"),
         );
 
         assert_eq!(decision, Some(Decision::Allowed));
@@ -212,7 +212,7 @@ mod tests {
         let decision = rbac()
             .decide(
                 &holding(&["operator", "auditor"]),
-                &Attempt::new(Action::Send, "Billing"),
+                &Attempt::now(Action::Send, "Billing"),
             )
             .expect("an opinion");
 
@@ -227,20 +227,20 @@ mod tests {
         assert_eq!(
             rbac().decide(
                 &holding(&["shipper"]),
-                &Attempt::new(Action::Send, "Billing")
+                &Attempt::now(Action::Send, "Billing")
             ),
             None
         );
         assert_eq!(
             rbac().decide(
                 &holding(&["visitor"]),
-                &Attempt::new(Action::Send, "Shipping")
+                &Attempt::now(Action::Send, "Shipping")
             ),
             None,
             "a role this policy does not define grants nothing"
         );
         assert_eq!(
-            rbac().decide(&holding(&[]), &Attempt::new(Action::Send, "Shipping")),
+            rbac().decide(&holding(&[]), &Attempt::now(Action::Send, "Shipping")),
             None
         );
     }
@@ -263,7 +263,7 @@ mod tests {
 
         assert_eq!(Rbac::held_by(&facts), vec!["operator", "shipper"]);
         assert_eq!(
-            rbac().decide(&facts, &Attempt::new(Action::Process, "Approval")),
+            rbac().decide(&facts, &Attempt::now(Action::Process, "Approval")),
             Some(Decision::Allowed)
         );
     }
